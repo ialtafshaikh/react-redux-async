@@ -8,6 +8,7 @@ import store from "../redux/store/store";
 class Users extends Component {
   load = () => {
     store.dispatch(usersActionGenerator(userActionTypes.LOAD));
+    // store.dispatch(usersActionGenerator(userActionTypes.THUNK_LOAD));
 
     // fetch("https://jsonplaceholder.typicode.com/users")
     //   .then((response) => response.json())
@@ -19,10 +20,13 @@ class Users extends Component {
     //     console.log(err);
     //   });
   };
+  loadThunk = () => {
+    store.dispatch(usersActionGenerator(userActionTypes.THUNK_LOAD));
+  };
   render() {
     return (
       <div>
-        <h1>Users Lists</h1>
+        <h1>Users Lists using middleware</h1>
         <button onClick={this.load}>Load Users</button>
         {this.props.users.length === 0 ? (
           <p>no users to show</p>
@@ -33,13 +37,27 @@ class Users extends Component {
             })}
           </div>
         )}
+        <h1>Users Lists using Thunk middleware</h1>
+        <button onClick={this.loadThunk}>Load Users using thunk</button>
+        {this.props.thunkUsers.length === 0 ? (
+          <p>no users to show</p>
+        ) : (
+          <div>
+            {this.props.thunkUsers.map((user) => {
+              return <p key={user.id}>{user.name}</p>;
+            })}
+          </div>
+        )}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return { users: state.usersReducer.users };
+  return {
+    users: state.usersReducer.users,
+    thunkUsers: state.usersThunkReducer.users,
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
